@@ -2,9 +2,7 @@ name: Build and Release Data
 on:
   push:
     paths:
-      - .github/**
-      - data/**
-      - schemata/**
+      - '*' 
 
 jobs:
   build:
