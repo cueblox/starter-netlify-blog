@@ -1,0 +1,2 @@
+/api /.netlify/functions/server
+/graphql /.netlify/functions/server/graphql
