@@ -1,22 +1,17 @@
 'use strict';
+
+const jsonGraphqlExpress = require('json-graphql-server').default;
+const jsonServer = require('json-server')
 const express = require('express');
-const path = require('path');
 const serverless = require('serverless-http');
 const app = express();
-const bodyParser = require('body-parser');
+const fetch = require('sync-fetch');
 
-const router = express.Router();
-router.get('/', (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write('<h1>Hello from Express.js!</h1>');
-  res.end();
-});
-router.get('/another', (req, res) => res.json({ route: req.originalUrl }));
-router.post('/', (req, res) => res.json({ postBody: req.body }));
+const data = fetch('https://github.com/cueblox/starter-azure-blog/releases/download/blox/data.json').json();
+const router = jsonServer.router(data, { foreignKeySuffix: '_id' })
+app.use('/.netlify/functions/server/graphql', jsonGraphqlExpress(data));
+app.use("/.netlify/functions/server", router);
 
-app.use(bodyParser.json());
-app.use('/.netlify/functions/server', router);  // path must route to lambda
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 module.exports = app;
 module.exports.handler = serverless(app);
